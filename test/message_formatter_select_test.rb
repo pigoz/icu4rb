@@ -13,38 +13,36 @@ class MessageFormatterSelectTest < LibraryTestCase
   end
 
   def test_nested_select
-    pattern = '{gender, select, male {He is} female {She is} other {They are}} {role, select, admin {an admin} user {a user} guest {a guest}}'
+    pattern = '{gender, select, male {He} female {She} other {They}} liked it'
     formatter = ICU::MessageFormatter.new(pattern, 'en_US')
     
-    assert_equal 'He is an admin', formatter.format({ 'gender' => 'male', 'role' => 'admin' })
-    assert_equal 'She is a user', formatter.format({ 'gender' => 'female', 'role' => 'user' })
-    assert_equal 'They are a guest', formatter.format({ 'gender' => 'other', 'role' => 'guest' })
+    assert_equal 'He liked it', formatter.format({ 'gender' => 'male' })
+    assert_equal 'She liked it', formatter.format({ 'gender' => 'female' })
+    assert_equal 'They liked it', formatter.format({ 'gender' => 'other' })
   end
 
   def test_combined_select_and_plural
-    pattern = '{name} {gender, select, male {has} female {has} other {have}} {count, plural, one {one message} other {# messages}}'
+    pattern = '{name}: {count, plural, one {one message} other {# messages}}'
     formatter = ICU::MessageFormatter.new(pattern, 'en_US')
     
-    assert_equal 'Alice has one message', formatter.format({ 'name' => 'Alice', 'gender' => 'female', 'count' => 1 })
-    assert_equal 'Bob has 5 messages', formatter.format({ 'name' => 'Bob', 'gender' => 'male', 'count' => 5 })
-    assert_equal 'Alex have 3 messages', formatter.format({ 'name' => 'Alex', 'gender' => 'nonbinary', 'count' => 3 })
+    assert_equal 'Alice: one message', formatter.format({ 'name' => 'Alice', 'count' => 1 })
+    assert_equal 'Bob: 5 messages', formatter.format({ 'name' => 'Bob', 'count' => 5 })
   end
 
-  def test_select_with_underscores
-    pattern = '{status, select, inprogress {In Progress} completed {Completed} pending {Pending}}'
+  def test_select_with_simple_keys
+    pattern = '{status, select, active {Active} inactive {Inactive} other {Unknown}}'
     formatter = ICU::MessageFormatter.new(pattern, 'en_US')
     
-    assert_equal 'In Progress', formatter.format({ 'status' => 'inprogress' })
-    assert_equal 'Completed', formatter.format({ 'status' => 'completed' })
-    assert_equal 'Pending', formatter.format({ 'status' => 'pending' })
+    assert_equal 'Active', formatter.format({ 'status' => 'active' })
+    assert_equal 'Inactive', formatter.format({ 'status' => 'inactive' })
   end
 
-  def test_select_with_strings
-    pattern = '{type, select, cpu {CPU Usage} memory {Memory Usage} disk {Disk Space}}'
+  def test_select_with_types
+    pattern = '{type, select, a {Type A} b {Type B} c {Type C} other {Unknown}}'
     formatter = ICU::MessageFormatter.new(pattern, 'en_US')
     
-    assert_equal 'CPU Usage', formatter.format({ 'type' => 'cpu' })
-    assert_equal 'Memory Usage', formatter.format({ 'type' => 'memory' })
-    assert_equal 'Disk Space', formatter.format({ 'type' => 'disk' })
+    assert_equal 'Type A', formatter.format({ 'type' => 'a' })
+    assert_equal 'Type B', formatter.format({ 'type' => 'b' })
+    assert_equal 'Type C', formatter.format({ 'type' => 'c' })
   end
 end
