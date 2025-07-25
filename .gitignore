@@ -6,4 +6,6 @@
 /pkg/
 /spec/reports/
 /tmp/
+/ext/icu4rb/build
+/lib/icu4rb/icu4rb.bundle
 .prompts
